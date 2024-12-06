@@ -46,6 +46,10 @@ document.addEventListener('DOMContentLoaded', () => {
         volumeSlider.addEventListener('input', (event) => {
             const volume = event.target.value;
             sounds[soundName].volume = volume;
+            
+            // Update the gradient
+            const percentage = volume * 100;
+            event.target.style.setProperty('--value', `${percentage}%`);
         });
 
         // Prevent slider interaction from triggering card click
@@ -101,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (state.active) {
                 sound.volume = state.volume;
                 slider.value = state.volume;
+                slider.style.setProperty('--value', `${state.volume * 100}%`);
                 slider.disabled = false;
                 sound.play();
                 card.classList.add('active');
@@ -429,5 +434,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 break;
         }
+    });
+
+    // Initialize all sliders with default value
+    document.querySelectorAll('.volume-slider').forEach(slider => {
+        slider.style.setProperty('--value', '50%');
     });
 });
