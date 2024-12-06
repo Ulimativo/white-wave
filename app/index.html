@@ -15,10 +15,15 @@
     <div class="gradient-bg"></div>
 
     <!-- Theme Toggle -->
-    <button id="theme-toggle" class="fixed top-6 right-6 p-3 rounded-xl bg-white/10 backdrop-blur-lg hover:bg-white/20 transition-all hover:scale-110 z-50">
-        <i class="fas fa-moon dark:hidden text-xl"></i>
-        <i class="fas fa-sun hidden dark:block text-xl"></i>
-    </button>
+    <div class="fixed top-6 right-6 z-50">
+        <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="theme-toggle" class="sr-only peer">
+            <div class="w-14 h-7 bg-white/10 backdrop-blur-lg peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-purple-500/50">
+                <i class="fas fa-sun absolute left-1.5 top-1.5 text-[12px] text-yellow-300 transition-opacity opacity-100 peer-checked:opacity-0"></i>
+                <i class="fas fa-moon absolute right-1.5 top-1.5 text-[12px] text-white transition-opacity opacity-0 peer-checked:opacity-100"></i>
+            </div>
+        </label>
+    </div>
 
     <div class="container mx-auto px-4 py-12 relative z-10">
         <!-- Header with animated text -->
