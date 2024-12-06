@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const alertMessage = document.getElementById('alert-message');
     const shortcutsModal = document.getElementById('shortcuts-modal');
     const shortcutsButton = document.getElementById('shortcuts-info');
+    const body = document.body;
 
 
     // Load sound files
@@ -41,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 volumeSlider.disabled = true;
                 card.classList.remove('active', 'playing');
             }
+            updateBackgroundState();
         });
 
         volumeSlider.addEventListener('input', (event) => {
@@ -111,6 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 card.classList.add('active');
             }
         });
+
+        updateBackgroundState();
     }
 
     function createPresetCard(name, mixState) {
@@ -440,4 +444,24 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.volume-slider').forEach(slider => {
         slider.style.setProperty('--value', '50%');
     });
+
+    // Update the function that handles sound activation
+    function updateBackgroundState() {
+        const activeSounds = Array.from(soundCards).filter(card => card.classList.contains('active'));
+        const activeCount = activeSounds.length;
+
+        // Remove all states first
+        body.classList.remove('sound-playing', 'multiple-sounds', 'many-sounds');
+
+        // Add appropriate classes based on number of active sounds
+        if (activeCount > 0) {
+            body.classList.add('sound-playing');
+            if (activeCount >= 2) {
+                body.classList.add('multiple-sounds');
+            }
+            if (activeCount >= 4) {
+                body.classList.add('many-sounds');
+            }
+        }
+    }
 });
