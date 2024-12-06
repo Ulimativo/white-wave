@@ -286,3 +286,30 @@
         font-size: 1.5rem;
     }
 }
+
+.wave-text {
+  background: linear-gradient(
+    45deg,
+    #6366f1,
+    #8b5cf6,
+    #ec4899,
+    #6366f1
+  );
+  background-size: 300%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: wave-animation 8s ease-in-out infinite;
+}
+
+@keyframes wave-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
