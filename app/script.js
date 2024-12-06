@@ -18,6 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const shortcutsModal = document.getElementById('shortcuts-modal');
     const shortcutsButton = document.getElementById('shortcuts-info');
     const body = document.body;
+    const creditsModal = document.getElementById('credits-modal');
+    const showCreditsButton = document.getElementById('show-credits');
 
 
     // Load sound files
@@ -406,7 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             case 'escape':
                 // Close any open modal
-                [saveModal, alertModal, shortcutsModal].forEach(modal => {
+                [saveModal, alertModal, shortcutsModal, creditsModal].forEach(modal => {
                     if (modal.hasAttribute('data-visible')) {
                         modal.removeAttribute('data-visible');
                     }
@@ -464,4 +466,34 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
+
+    showCreditsButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        creditsModal.setAttribute('data-visible', 'true');
+    });
+
+    document.querySelectorAll('.credits-close').forEach(button => {
+        button.addEventListener('click', () => {
+            creditsModal.removeAttribute('data-visible');
+        });
+
+    });
+
+    // Close credits modal on outside click
+    creditsModal.addEventListener('click', (e) => {
+        if (e.target === creditsModal) {
+            creditsModal.removeAttribute('data-visible');
+        }
+    });
+
+    // Update the ESC key handler to include credits modal
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            [saveModal, alertModal, shortcutsModal, creditsModal].forEach(modal => {
+                if (modal.hasAttribute('data-visible')) {
+                    modal.removeAttribute('data-visible');
+                }
+            });
+        }
+    });
 });

@@ -557,3 +557,14 @@
     background-color: #1a1b26;
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
 }
+
+/* Credits Modal Animation */
+#credits-modal[data-visible="true"] {
+    display: flex;
+    animation: modalFadeIn 0.2s ease-out;
+}
+
+#credits-modal > div {
+    background-color: #1a1b26;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+}
