@@ -313,3 +313,79 @@
     background-position: 0% 50%;
   }
 }
+
+.preset-card {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.preset-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.preset-card button {
+    transition: all 0.2s ease;
+}
+
+.preset-card button:hover {
+    transform: scale(1.1);
+}
+
+.preset-card .delete-preset:hover {
+    color: #ff4444;
+}
+
+.preset-card .play-preset:hover {
+    color: #4eff4e;
+}
+
+/* Modal Animation */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+#save-mix-modal[data-visible="true"] {
+    display: flex;
+    animation: modalFadeIn 0.2s ease-out;
+}
+
+#save-mix-modal > div {
+    background-color: #1a1b26;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Form Input Styles */
+#mix-name {
+    background-color: #2a2b36;
+    color: white;
+}
+
+#mix-name::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* Form Input Autofill Style */
+#mix-name:-webkit-autofill {
+    -webkit-text-fill-color: white !important;
+    -webkit-box-shadow: 0 0 0px 1000px #2a2b36 inset !important;
+    caret-color: white;
+}
+
+/* Alert Modal Animation */
+#alert-modal[data-visible="true"] {
+    display: flex;
+    animation: modalFadeIn 0.2s ease-out;
+}
+
+#alert-modal > div {
+    background-color: #1a1b26;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+}
