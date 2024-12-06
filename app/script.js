@@ -17,6 +17,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const alertMessage = document.getElementById('alert-message');
     const shortcutsModal = document.getElementById('shortcuts-modal');
     const shortcutsButton = document.getElementById('shortcuts-info');
+    const shareModal = document.getElementById('share-modal');
+    const shareUrlInput = document.getElementById('share-url');
+    const copyUrlButton = document.getElementById('copy-url');
+    const copyFeedback = document.getElementById('copy-feedback');
 
     // Load sound files
     soundCards.forEach(card => {
@@ -127,6 +131,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <button class="play-preset p-2 rounded-lg bg-white/10 hover:bg-white/20">
                         <i class="fas fa-play"></i>
                     </button>
+                    <button class="share-preset p-2 rounded-lg bg-white/10 hover:bg-white/20">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
                     <button class="delete-preset p-2 rounded-lg bg-white/10 hover:bg-white/20">
                         <i class="fas fa-trash"></i>
                     </button>
@@ -140,6 +147,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Add event listeners
         card.querySelector('.play-preset').addEventListener('click', () => {
             applyMixState(mixState);
+        });
+
+        card.querySelector('.share-preset').addEventListener('click', () => {
+            shareMix(name, mixState);
         });
 
         card.querySelector('.delete-preset').addEventListener('click', async () => {
@@ -427,4 +438,91 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
         }
     });
-});
+
+    // Add copy functionality
+    copyUrlButton.addEventListener('click', async () => {
+        try {
+            await navigator.clipboard.writeText(shareUrlInput.value);
+            copyFeedback.classList.remove('hidden');
+            setTimeout(() => copyFeedback.classList.add('hidden'), 2000);
+        } catch (err) {
+            showAlert('Failed to copy to clipboard');
+        }
+    });
+
+    // Add share modal close handlers
+    document.querySelectorAll('.share-close').forEach(button => {
+        button.addEventListener('click', () => {
+            shareModal.removeAttribute('data-visible');
+        });
+    });
+
+    shareModal.addEventListener('click', (e) => {
+        if (e.target === shareModal) {
+            shareModal.removeAttribute('data-visible');
+        }
+    });
+
+    // Handle shared mixes from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const sharedMix = urlParams.get('mix');
+    
+    if (sharedMix) {
+        try {
+            const shareData = JSON.parse(atob(sharedMix));
+            applyMixState(shareData.mixState);
+            
+            // Show a welcome message
+            showAlert(`Loading shared mix: ${shareData.name}`);
+            
+            // Optionally save the shared mix
+            setTimeout(() => {
+                showConfirm('Would you like to save this mix to your collection?').then(confirmed => {
+                    if (confirmed) {
+                        const savedMixes = JSON.parse(localStorage.getItem('presetMixes') || '{}');
+                        savedMixes[shareData.name] = shareData.mixState;
+                        localStorage.setItem('presetMixes', JSON.stringify(savedMixes));
+                        presetMixesContainer.appendChild(createPresetCard(shareData.name, shareData.mixState));
+                    }
+                });
+            }, 1000);
+            
+            // Clean up the URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+        } catch (err) {
+            showAlert('Invalid share link');
+        }
+    }
+
+    // Update ESC key handler to include share modal
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            [alertModal, saveModal, shortcutsModal, shareModal].forEach(modal => {
+                if (modal.hasAttribute('data-visible')) {
+                    modal.removeAttribute('data-visible');
+                    if (modal === saveModal) {
+                        mixNameInput.value = '';
+                    }
+                }
+            });
+        }
+    });
+});// Move this code outside of DOMContentLoaded and place it with other functions
+function shareMix(name, mixState) {
+    // Create a shareable object
+    const shareData = {
+        name,
+        mixState,
+        emoji: mixEmojis[Math.floor(Math.random() * mixEmojis.length)]
+    };
+    
+    // Convert to base64 to make it URL-friendly
+    const shareString = btoa(JSON.stringify(shareData));
+    const shareUrl = `${window.location.origin}${window.location.pathname}?mix=${shareString}`;
+    
+    // Show the share modal
+    shareUrlInput.value = shareUrl;
+    shareModal.setAttribute('data-visible', 'true');
+    shareUrlInput.select();
+}
+
