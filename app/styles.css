@@ -389,3 +389,30 @@
     background-color: #1a1b26;
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
 }
+
+/* Shortcuts Modal Animation */
+#shortcuts-modal[data-visible="true"] {
+    display: flex;
+    animation: modalFadeIn 0.2s ease-out;
+}
+
+#shortcuts-modal > div {
+    background-color: #1a1b26;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Keyboard shortcut grid styles */
+#shortcuts-modal .grid {
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+#shortcuts-modal .grid > div {
+    padding: 0.5rem;
+}
+
+#shortcuts-modal .text-white/60 {
+    font-family: monospace;
+    font-weight: bold;
+}
