@@ -17,10 +17,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const alertMessage = document.getElementById('alert-message');
     const shortcutsModal = document.getElementById('shortcuts-modal');
     const shortcutsButton = document.getElementById('shortcuts-info');
+<<<<<<< HEAD
     const shareModal = document.getElementById('share-modal');
     const shareUrlInput = document.getElementById('share-url');
     const copyUrlButton = document.getElementById('copy-url');
     const copyFeedback = document.getElementById('copy-feedback');
+=======
+>>>>>>> ec511307fc5ec90925c531f6a6e9a7448fc36356
 
     // Load sound files
     soundCards.forEach(card => {
@@ -438,6 +441,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
         }
     });
+<<<<<<< HEAD
 
     // Add copy functionality
     copyUrlButton.addEventListener('click', async () => {
@@ -526,3 +530,6 @@ function shareMix(name, mixState) {
     shareUrlInput.select();
 }
 
+=======
+});
+>>>>>>> ec511307fc5ec90925c531f6a6e9a7448fc36356
