@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const mixEmojis = ["🎵", "🎶", "🎧", "🎼", "🎹", "🎸", "🌟", "✨", "💫", "🌙", "🌊", "🍃", "🌺", "🦋", "🎪", "🎭", "🎪", "🎨", "🌈", "🍀"];
     const alertModal = document.getElementById('alert-modal');
     const alertMessage = document.getElementById('alert-message');
+    const shortcutsModal = document.getElementById('shortcuts-modal');
+    const shortcutsButton = document.getElementById('shortcuts-info');
 
     // Load sound files
     soundCards.forEach(card => {
@@ -316,6 +318,113 @@ document.addEventListener('DOMContentLoaded', () => {
                 saveModal.removeAttribute('data-visible');
                 mixNameInput.value = '';
             }
+        }
+    });
+
+    function toggleShortcutsModal() {
+        const isVisible = shortcutsModal.hasAttribute('data-visible');
+        if (isVisible) {
+            shortcutsModal.removeAttribute('data-visible');
+        } else {
+            shortcutsModal.setAttribute('data-visible', 'true');
+        }
+    }
+
+    shortcutsButton.addEventListener('click', toggleShortcutsModal);
+
+    document.querySelectorAll('.shortcuts-close').forEach(button => {
+        button.addEventListener('click', () => {
+            shortcutsModal.removeAttribute('data-visible');
+        });
+    });
+
+    // Close shortcuts modal on outside click
+    shortcutsModal.addEventListener('click', (e) => {
+        if (e.target === shortcutsModal) {
+            shortcutsModal.removeAttribute('data-visible');
+        }
+    });
+
+    // Update the keyboard event listener to handle all shortcuts
+    document.addEventListener('keydown', (e) => {
+        // Ignore shortcuts when typing in input fields
+        if (e.target.tagName === 'INPUT') return;
+
+        switch (e.key.toLowerCase()) {
+            case ' ': // Spacebar
+                e.preventDefault(); // Prevent page scroll
+                // Toggle all active sounds
+                soundCards.forEach(card => {
+                    if (card.classList.contains('active')) {
+                        const soundName = card.dataset.sound;
+                        if (sounds[soundName].paused) {
+                            sounds[soundName].play();
+                        } else {
+                            sounds[soundName].pause();
+                        }
+                    }
+                });
+                break;
+
+            case 'm':
+                // Mute/unmute all sounds
+                const anyPlaying = Object.values(sounds).some(sound => !sound.paused);
+                Object.values(sounds).forEach(sound => {
+                    if (anyPlaying) {
+                        sound.pause();
+                    } else if (sound._wasPlaying) {
+                        sound.play();
+                    }
+                    sound._wasPlaying = !sound.paused;
+                });
+                break;
+
+            case 's':
+                // Open save mix modal
+                if (!saveModal.hasAttribute('data-visible')) {
+                    saveMixButton.click();
+                }
+                break;
+
+            case '?':
+            case '/':
+                // Toggle shortcuts modal
+                toggleShortcutsModal();
+                break;
+
+            case 'escape':
+                // Close any open modal
+                [saveModal, alertModal, shortcutsModal].forEach(modal => {
+                    if (modal.hasAttribute('data-visible')) {
+                        modal.removeAttribute('data-visible');
+                    }
+                });
+                mixNameInput.value = '';
+                break;
+
+            default:
+                // Number keys 1-9 for toggling sounds
+                if (!isNaN(e.key) && e.key !== '0') {
+                    const index = parseInt(e.key) - 1;
+                    const card = soundCards[index];
+                    if (card) card.click();
+                }
+
+                // Arrow keys for volume control of active sounds
+                if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                    e.preventDefault(); // Prevent page scroll
+                    soundCards.forEach(card => {
+                        if (card.classList.contains('active')) {
+                            const slider = card.querySelector('.volume-slider');
+                            const step = e.key === 'ArrowUp' ? 0.1 : -0.1;
+                            const newValue = Math.max(0, Math.min(1, parseFloat(slider.value) + step));
+                            slider.value = newValue;
+                            const event = new Event('input');
+                            slider.dispatchEvent(event);
+                        }
+                    });
+                }
+                break;
         }
     });
 });
