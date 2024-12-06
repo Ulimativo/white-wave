@@ -1,0 +1,288 @@
+/* Base styles */
+:root {
+    --card-bg: rgba(255, 255, 255, 0.03);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --card-hover-bg: rgba(255, 255, 255, 0.05);
+    --text-primary: rgba(255, 255, 255, 0.9);
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --accent-gradient: linear-gradient(45deg, #FF79C6, #BD93F9, #8BE9FD);
+}
+
+.dark {
+    --card-bg: rgba(0, 0, 0, 0.2);
+    --card-border: rgba(255, 255, 255, 0.05);
+    --card-hover-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* Animated Background */
+.gradient-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        125deg,
+        #000B18,
+        #0F172A,
+        #1A1039,
+        #1E1B4B
+    );
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    z-index: 0;
+}
+
+.noise {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAElBMVEUAAAD8/vz08vT09PT8+vz///+Yqd4YAAAABXRSTlMoKCh/f39BJt3UAAAAQklEQVQ4y2NgQAX8DKiAH58EkoS2OJIEuz6ShKA+koS4PpIEvz6ShKo+koS8PpKEtj6ShIA+koSQPpKEiD6SxGAFAKPtMxv1IqM5AAAAAElFTkSuQmCC');
+    opacity: 0.05;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Glitch Text Effect */
+.glitch-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.glitch-text {
+    position: relative;
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shine 3s ease-in-out infinite;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.glitch-text::before {
+    left: 2px;
+    text-shadow: -2px 0 #ff00c1;
+    clip: rect(44px, 450px, 56px, 0);
+    animation: glitch-anim 5s infinite linear alternate-reverse;
+}
+
+.glitch-text::after {
+    left: -2px;
+    text-shadow: -2px 0 #00fff9, 2px 2px #ff00c1;
+    animation: glitch-anim2 1s infinite linear alternate-reverse;
+}
+
+/* Sound Cards */
+.sound-card {
+    position: relative;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+.sound-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.5);
+}
+
+.sound-card.active {
+    background: rgba(255, 121, 198, 0.15);
+    border-color: rgba(255, 121, 198, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(255, 121, 198, 0.37);
+}
+
+.card-content {
+    position: relative;
+    padding: 2rem;
+    z-index: 2;
+    background: transparent;
+    transition: transform 0.3s ease;
+}
+
+.sound-icon-wrapper {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sound-card:hover .sound-icon-wrapper {
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.sound-card.active .sound-icon-wrapper {
+    background: var(--accent-gradient);
+    border-color: rgba(255, 255, 255, 0.3);
+    animation: pulse 2s infinite;
+}
+
+/* Optional: Add a subtle inner glow to active cards */
+.sound-card.active::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        circle at center,
+        rgba(255, 121, 198, 0.2),
+        transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sound-card.active:hover::before {
+    opacity: 1;
+}
+
+/* Volume Slider */
+.volume-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.1);
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #FF79C6;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 0 10px rgba(255, 121, 198, 0.5);
+}
+
+.volume-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 15px rgba(255, 121, 198, 0.7);
+}
+
+/* Play Button */
+.play-button {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: var(--accent-gradient);
+    border: none;
+    color: white;
+    font-size: 1.75rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.button-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.button-glow {
+    position: absolute;
+    inset: -5px;
+    background: var(--accent-gradient);
+    filter: blur(15px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.play-button:hover .button-glow {
+    opacity: 0.5;
+}
+
+.play-button:hover .button-content {
+    transform: scale(0.95);
+}
+
+/* Animations */
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes shine {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes glitch-anim {
+    0% { clip: rect(44px, 450px, 56px, 0); }
+    20% { clip: rect(4px, 450px, 96px, 0); }
+    40% { clip: rect(64px, 450px, 36px, 0); }
+    60% { clip: rect(24px, 450px, 76px, 0); }
+    80% { clip: rect(84px, 450px, 16px, 0); }
+    100% { clip: rect(14px, 450px, 86px, 0); }
+}
+
+@keyframes glitch-anim2 {
+    0% { clip: rect(24px, 450px, 76px, 0); }
+    20% { clip: rect(84px, 450px, 16px, 0); }
+    40% { clip: rect(44px, 450px, 56px, 0); }
+    60% { clip: rect(4px, 450px, 96px, 0); }
+    80% { clip: rect(64px, 450px, 36px, 0); }
+    100% { clip: rect(14px, 450px, 86px, 0); }
+}
+
+/* Media Queries */
+@media (max-width: 640px) {
+    .glitch-text {
+        font-size: 3rem;
+    }
+    
+    .sound-card {
+        margin: 0 1rem;
+    }
+    
+    .play-button {
+        width: 70px;
+        height: 70px;
+        font-size: 1.5rem;
+    }
+}

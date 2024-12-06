@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>White Wave</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="font-space-grotesk bg-[#0F172A] text-white min-h-screen overflow-x-hidden">
+    <!-- Animated background -->
+    <div class="noise"></div>
+    <div class="gradient-bg"></div>
+
+    <!-- Theme Toggle -->
+    <button id="theme-toggle" class="fixed top-6 right-6 p-3 rounded-xl bg-white/10 backdrop-blur-lg hover:bg-white/20 transition-all hover:scale-110 z-50">
+        <i class="fas fa-moon dark:hidden text-xl"></i>
+        <i class="fas fa-sun hidden dark:block text-xl"></i>
+    </button>
+
+    <div class="container mx-auto px-4 py-12 relative z-10">
+        <!-- Header with animated text -->
+        <header class="text-center mb-16">
+            <div class="glitch-wrapper">
+                <h1 class="text-7xl font-bold mb-4 glitch-text">White Wave</h1>
+            </div>
+            <p class="text-xl text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                Your Vibe. Your Mix. Your Wave.
+            </p>
+        </header>
+
+        <!-- Sound Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+            <!-- Thunderstorm -->
+            <div class="sound-card group" data-sound="thunderstorm">
+                <div class="card-content">
+                    <div class="sound-icon-wrapper">
+                        <span class="text-5xl mb-4">⛈️</span>
+                    </div>
+                    <h3 class="text-2xl font-medium mb-6">Thunder</h3>
+                    <div class="volume-control">
+                        <input type="range" 
+                               class="volume-slider"
+                               min="0" max="1" step="0.01" value="0.5" disabled>
+                    </div>
+                    <div class="card-blur"></div>
+                </div>
+            </div>
+
+            <!-- Waves -->
+            <div class="sound-card group" data-sound="waves">
+                <div class="card-content">
+                    <div class="sound-icon-wrapper">
+                        <span class="text-5xl mb-4">🌊</span>
+                    </div>
+                    <h3 class="text-2xl font-medium mb-6">Waves</h3>
+                    <div class="volume-control">
+                        <input type="range" 
+                               class="volume-slider"
+                               min="0" max="1" step="0.01" value="0.5" disabled>
+                    </div>
+                    <div class="card-blur"></div>
+                </div>
+            </div>
+
+            <!-- Rain -->
+            <div class="sound-card group" data-sound="rain">
+                <div class="card-content">
+                    <div class="sound-icon-wrapper">
+                        <span class="text-5xl mb-4">🌧️</span>
+                    </div>
+                    <h3 class="text-2xl font-medium mb-6">Rain</h3>
+                    <div class="volume-control">
+                        <input type="range" 
+                               class="volume-slider"
+                               min="0" max="1" step="0.01" value="0.5" disabled>
+                    </div>
+                    <div class="card-blur"></div>
+                </div>
+            </div>
+
+            <!-- Birds Chirping -->
+            <div class="sound-card group" data-sound="birds">
+                <div class="card-content">
+                    <div class="sound-icon-wrapper">
+                        <span class="text-5xl mb-4">🐦</span>
+                    </div>
+                    <h3 class="text-2xl font-medium mb-6">Birds Chirping</h3>
+                    <div class="volume-control">
+                        <input type="range" 
+                               class="volume-slider"
+                               min="0" max="1" step="0.01" value="0.5" disabled>
+                    </div>
+                    <div class="card-blur"></div>
+                </div>
+            </div>
+
+            <!-- Fire Crackling -->
+            <div class="sound-card group" data-sound="fire">
+                <div class="card-content">
+                    <div class="sound-icon-wrapper">
+                        <span class="text-5xl mb-4">🔥</span>
+                    </div>
+                    <h3 class="text-2xl font-medium mb-6">Fire Crackling</h3>
+                    <div class="volume-control">
+                        <input type="range" 
+                               class="volume-slider"
+                               min="0" max="1" step="0.01" value="0.5" disabled>
+                    </div>
+                    <div class="card-blur"></div>
+                </div>
+            </div>
+
+            <!-- Underwater Sounds -->
+            <div class="sound-card group" data-sound="underwater">
+                <div class="card-content">
+                    <div class="sound-icon-wrapper">
+                        <span class="text-5xl mb-4">🤿</span> <!-- Diving -->
+                    </div>
+                    <h3 class="text-2xl font-medium mb-6">Underwater Sounds</h3>
+                    <div class="volume-control">
+                        <input type="range" 
+                               class="volume-slider"
+                               min="0" max="1" step="0.01" value="0.5" disabled>
+                    </div>
+                    <div class="card-blur"></div>
+                </div>
+            </div>
+
+            <!-- Lo-Fi Sound -->
+            <div class="sound-card group" data-sound="lofi">
+                <div class="card-content">
+                    <div class="sound-icon-wrapper">
+                        <span class="text-5xl mb-4">🎧</span> <!-- Headphones -->
+                    </div>
+                    <h3 class="text-2xl font-medium mb-6">Lo-Fi Sound</h3>
+                    <div class="volume-control">
+                        <input type="range" 
+                               class="volume-slider"
+                               min="0" max="1" step="0.01" value="0.5" disabled>
+                    </div>
+                    <div class="card-blur"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Controls -->
+        <div class="fixed bottom-8 left-0 right-0 flex justify-center z-20">
+            <button id="play-pause" class="play-button group">
+                <div class="button-content">
+                    <i class="fas fa-play"></i>
+                </div>
+                <div class="button-glow"></div>
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
