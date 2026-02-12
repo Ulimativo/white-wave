@@ -16,3 +16,6 @@ build/
 # OS generated files
 .DS_Store
 Thumbs.db
+
+# Release artifacts
+white-wave-chrome-extension.zip

@@ -26,10 +26,19 @@
         </div>
     </div>
 
-    <!-- Theme Toggle -->
-    <div class="fixed top-6 right-6 z-50">
+    <!-- Top Controls -->
+    <div class="fixed top-6 right-6 z-50 flex items-center gap-3">
+        <button id="shortcuts-info" type="button" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all focus:outline-none focus:ring-2 focus:ring-purple-500/60" aria-haspopup="dialog">
+            <i class="fas fa-keyboard mr-2"></i>Shortcuts
+        </button>
+        <button id="show-credits" type="button" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all focus:outline-none focus:ring-2 focus:ring-purple-500/60" aria-haspopup="dialog">
+            <i class="fas fa-info-circle mr-2"></i>Credits
+        </button>
+        <button id="stop-all" type="button" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all focus:outline-none focus:ring-2 focus:ring-purple-500/60">
+            <i class="fas fa-stop mr-2"></i>Stop
+        </button>
         <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" id="theme-toggle" class="sr-only peer">
+            <input type="checkbox" id="theme-toggle" class="sr-only peer" aria-label="Toggle dark mode">
             <div class="w-14 h-7 bg-white/10 backdrop-blur-lg peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-purple-500/50">
                 <i class="fas fa-sun absolute left-1.5 top-1.5 text-[12px] text-yellow-300 transition-opacity opacity-100 peer-checked:opacity-0"></i>
                 <i class="fas fa-moon absolute right-1.5 top-1.5 text-[12px] text-white transition-opacity opacity-0 peer-checked:opacity-100"></i>
@@ -41,7 +50,7 @@
         <!-- Header with animated text -->
         <header class="text-center mb-16">
             <div class="glitch-wrapper">
-                <h1 class="text-7xl font-bold mb-4 glitch-text animate-gradient wave-text">White Wave</h1>
+                <h1 class="text-7xl font-bold mb-4 glitch-text animate-gradient wave-text" data-text="White Wave">White Wave</h1>
             </div>
             <p class="text-xl text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
                 Your Vibe. Your Mix. Your Wave.
@@ -55,14 +64,14 @@
         <!-- Sound Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
             <!-- Thunderstorm -->
-            <div class="sound-card group" data-sound="thunderstorm">
+            <div class="sound-card group" data-sound="thunderstorm" role="button" tabindex="0" aria-pressed="false" aria-label="Toggle Thunder sound">
                 <div class="card-content">
                     <div class="sound-icon-wrapper">
                         <span class="text-5xl mb-4">⛈️</span>
                     </div>
                     <h3 class="text-2xl font-medium mb-6">Thunder</h3>
                     <div class="volume-control">
-                        <input type="range" 
+                        <input type="range"
                                class="volume-slider"
                                min="0" max="1" step="0.01" value="0.5" disabled>
                     </div>
@@ -71,14 +80,14 @@
             </div>
 
             <!-- Waves -->
-            <div class="sound-card group" data-sound="waves">
+            <div class="sound-card group" data-sound="waves" role="button" tabindex="0" aria-pressed="false" aria-label="Toggle Waves sound">
                 <div class="card-content">
                     <div class="sound-icon-wrapper">
                         <span class="text-5xl mb-4">🌊</span>
                     </div>
                     <h3 class="text-2xl font-medium mb-6">Waves</h3>
                     <div class="volume-control">
-                        <input type="range" 
+                        <input type="range"
                                class="volume-slider"
                                min="0" max="1" step="0.01" value="0.5" disabled>
                     </div>
@@ -87,14 +96,14 @@
             </div>
 
             <!-- Rain -->
-            <div class="sound-card group" data-sound="rain">
+            <div class="sound-card group" data-sound="rain" role="button" tabindex="0" aria-pressed="false" aria-label="Toggle Rain sound">
                 <div class="card-content">
                     <div class="sound-icon-wrapper">
                         <span class="text-5xl mb-4">🌧️</span>
                     </div>
                     <h3 class="text-2xl font-medium mb-6">Rain</h3>
                     <div class="volume-control">
-                        <input type="range" 
+                        <input type="range"
                                class="volume-slider"
                                min="0" max="1" step="0.01" value="0.5" disabled>
                     </div>
@@ -103,7 +112,7 @@
             </div>
 
             <!-- Birds Chirping -->
-            <div class="sound-card group" data-sound="birds">
+            <div class="sound-card group" data-sound="birds" role="button" tabindex="0" aria-pressed="false" aria-label="Toggle Birds sound">
                 <div class="card-content">
                     <div class="sound-icon-wrapper">
                         <span class="text-5xl mb-4">🐦</span>
@@ -119,14 +128,14 @@
             </div>
 
             <!-- Fire Crackling -->
-            <div class="sound-card group" data-sound="fire">
+            <div class="sound-card group" data-sound="fire" role="button" tabindex="0" aria-pressed="false" aria-label="Toggle Fire sound">
                 <div class="card-content">
                     <div class="sound-icon-wrapper">
                         <span class="text-5xl mb-4">🔥</span>
                     </div>
                     <h3 class="text-2xl font-medium mb-6">Fire Crackling</h3>
                     <div class="volume-control">
-                        <input type="range" 
+                        <input type="range"
                                class="volume-slider"
                                min="0" max="1" step="0.01" value="0.5" disabled>
                     </div>
@@ -135,14 +144,14 @@
             </div>
 
             <!-- Underwater Sounds -->
-            <div class="sound-card group" data-sound="underwater">
+            <div class="sound-card group" data-sound="underwater" role="button" tabindex="0" aria-pressed="false" aria-label="Toggle Underwater sound">
                 <div class="card-content">
                     <div class="sound-icon-wrapper">
                         <span class="text-5xl mb-4">🤿</span> <!-- Diving -->
                     </div>
                     <h3 class="text-2xl font-medium mb-6">Underwater Sounds</h3>
                     <div class="volume-control">
-                        <input type="range" 
+                        <input type="range"
                                class="volume-slider"
                                min="0" max="1" step="0.01" value="0.5" disabled>
                     </div>
@@ -151,14 +160,14 @@
             </div>
 
             <!-- Lo-Fi Sound -->
-            <div class="sound-card group" data-sound="lofi">
+            <div class="sound-card group" data-sound="lofi" role="button" tabindex="0" aria-pressed="false" aria-label="Toggle Lo-Fi sound">
                 <div class="card-content">
                     <div class="sound-icon-wrapper">
                         <span class="text-5xl mb-4">🎧</span> <!-- Headphones -->
                     </div>
                     <h3 class="text-2xl font-medium mb-6">Lo-Fi Sound</h3>
                     <div class="volume-control">
-                        <input type="range" 
+                        <input type="range"
                                class="volume-slider"
                                min="0" max="1" step="0.01" value="0.5" disabled>
                     </div>
@@ -166,14 +175,14 @@
                 </div>
             </div>
              <!-- Coffee -->
-             <div class="sound-card group" data-sound="coffeeshop">
+             <div class="sound-card group" data-sound="coffeeshop" role="button" tabindex="0" aria-pressed="false" aria-label="Toggle Coffeeshop sound">
                 <div class="card-content">
                     <div class="sound-icon-wrapper">
                         <span class="text-5xl mb-4">☕</span> <!-- Headphones -->
                     </div>
                     <h3 class="text-2xl font-medium mb-6">Coffeeshop</h3>
                     <div class="volume-control">
-                        <input type="range" 
+                        <input type="range"
                                class="volume-slider"
                                min="0" max="1" step="0.01" value="0.5" disabled>
                     </div>
@@ -182,14 +191,14 @@
             </div>
 
             <!-- Keyboard -->
-            <div class="sound-card group" data-sound="keyboard">
+            <div class="sound-card group" data-sound="keyboard" role="button" tabindex="0" aria-pressed="false" aria-label="Toggle Keyboard sound">
                 <div class="card-content">
                     <div class="sound-icon-wrapper">
                         <span class="text-5xl mb-4">⌨️</span>
                     </div>
                     <h3 class="text-2xl font-medium mb-6">Keyboard</h3>
                     <div class="volume-control">
-                        <input type="range" 
+                        <input type="range"
                                class="volume-slider"
                                min="0" max="1" step="0.01" value="0.5" disabled>
                     </div>
@@ -215,11 +224,11 @@
     <script src="script.js"></script>
 
     <!-- Save Mix Modal -->
-    <div id="save-mix-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center z-50">
-        <div class="bg-[#1a1b26] border border-white/10 rounded-xl p-6 w-full max-w-md mx-4 transform transition-all shadow-xl">
+    <div id="save-mix-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center z-50" role="dialog" aria-modal="true" aria-labelledby="save-mix-title">
+        <div class="bg-[#1a1b26] border border-white/10 rounded-xl p-6 w-full max-w-md mx-4 transform transition-all shadow-xl" tabindex="-1">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-semibold">Save Mix</h3>
-                <button id="close-modal" class="text-white/60 hover:text-white">
+                <h3 id="save-mix-title" class="text-xl font-semibold">Save Mix</h3>
+                <button id="close-modal" type="button" class="text-white/60 hover:text-white" aria-label="Close save mix dialog">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -235,11 +244,11 @@
                     <p id="active-sounds-list" class="mt-1 font-medium text-white/80"></p>
                 </div>
                 <div class="flex gap-3 mt-6">
-                    <button type="submit" 
+                    <button type="submit"
                         class="flex-1 px-4 py-2 bg-purple-500 hover:bg-purple-600 rounded-lg transition-colors">
                         Save Mix
                     </button>
-                    <button type="button" id="cancel-save" 
+                    <button type="button" id="cancel-save"
                         class="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors">
                         Cancel
                     </button>
@@ -248,22 +257,76 @@
         </div>
     </div>
 
-    <!-- Add this just before the closing </body> tag, after the save mix modal -->
-    <div id="alert-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center z-50">
-        <div class="bg-[#1a1b26] border border-white/10 rounded-xl p-6 w-full max-w-md mx-4 transform transition-all shadow-xl">
+    <!-- Alert / Confirm Modal -->
+    <div id="alert-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center z-50" role="dialog" aria-modal="true" aria-labelledby="alert-title">
+        <div class="bg-[#1a1b26] border border-white/10 rounded-xl p-6 w-full max-w-md mx-4 transform transition-all shadow-xl" tabindex="-1">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-semibold">Notice</h3>
-                <button class="alert-close text-white/60 hover:text-white">
+                <h3 id="alert-title" class="text-xl font-semibold">Notice</h3>
+                <button type="button" class="alert-close text-white/60 hover:text-white" aria-label="Close dialog">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="space-y-4">
                 <p id="alert-message" class="text-white/80"></p>
-                <div class="flex justify-end gap-3 mt-6">
-                    <button class="alert-close px-4 py-2 bg-purple-500 hover:bg-purple-600 rounded-lg transition-colors">
+                <div class="flex justify-end gap-3 mt-6" id="alert-actions">
+                    <button type="button" id="alert-cancel" class="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors hidden">
+                        Cancel
+                    </button>
+                    <button type="button" id="alert-confirm" class="px-4 py-2 bg-purple-500 hover:bg-purple-600 rounded-lg transition-colors hidden">
+                        Confirm
+                    </button>
+                    <button type="button" id="alert-ok" class="alert-close px-4 py-2 bg-purple-500 hover:bg-purple-600 rounded-lg transition-colors">
                         OK
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shortcuts Modal -->
+    <div id="shortcuts-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center z-50" role="dialog" aria-modal="true" aria-labelledby="shortcuts-title">
+        <div class="bg-[#1a1b26] border border-white/10 rounded-xl p-6 w-full max-w-lg mx-4 transform transition-all shadow-xl" tabindex="-1">
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="shortcuts-title" class="text-xl font-semibold">Keyboard Shortcuts</h3>
+                <button type="button" class="shortcuts-close text-white/60 hover:text-white" aria-label="Close shortcuts dialog">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="text-sm text-white/80 space-y-3">
+                <p><span class="font-medium text-white">1–9</span> Toggle sounds</p>
+                <p><span class="font-medium text-white">Space</span> Play/pause selected sounds</p>
+                <p><span class="font-medium text-white">↑ / ↓</span> Volume up/down for selected sounds</p>
+                <p><span class="font-medium text-white">M</span> Mute/unmute</p>
+                <p><span class="font-medium text-white">S</span> Save mix</p>
+                <p><span class="font-medium text-white">?</span> Toggle this dialog</p>
+                <p><span class="font-medium text-white">Esc</span> Close dialogs</p>
+            </div>
+            <div class="flex justify-end mt-6">
+                <button type="button" class="shortcuts-close px-4 py-2 bg-purple-500 hover:bg-purple-600 rounded-lg transition-colors">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Credits Modal -->
+    <div id="credits-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center z-50" role="dialog" aria-modal="true" aria-labelledby="credits-title">
+        <div class="bg-[#1a1b26] border border-white/10 rounded-xl p-6 w-full max-w-lg mx-4 transform transition-all shadow-xl" tabindex="-1">
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="credits-title" class="text-xl font-semibold">Credits</h3>
+                <button type="button" class="credits-close text-white/60 hover:text-white" aria-label="Close credits dialog">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="text-sm text-white/80 space-y-3">
+                <p>UI styling uses TailwindCSS (CDN) and Font Awesome icons.</p>
+                <p>If you add or replace audio files in <code>app/sounds/</code>, please include attribution/licensing in the repository.</p>
+                <p class="text-white/60">Tip: the Chrome extension can play saved mixes from the same set of sound IDs.</p>
+            </div>
+            <div class="flex justify-end mt-6">
+                <button type="button" class="credits-close px-4 py-2 bg-purple-500 hover:bg-purple-600 rounded-lg transition-colors">
+                    OK
+                </button>
             </div>
         </div>
     </div>

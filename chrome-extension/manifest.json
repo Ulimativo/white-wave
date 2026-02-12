@@ -1,22 +1,18 @@
 {
   "manifest_version": 3,
   "name": "White Wave Player",
-  "version": "1.0",
-  "description": "Play your saved White Wave mixes right from your browser",
+  "version": "1.1.0",
+  "description": "Quick access to your favorite White Wave sounds",
+  "minimum_chrome_version": "109",
   "permissions": [
     "storage",
-    "activeTab",
+    "offscreen",
     "scripting",
-    "tabs"
+    "activeTab"
   ],
-  "host_permissions": [
-    "*://whitewave.ulrichraab.eu/*",
-    "*://localhost/*"
-  ],
-  "web_accessible_resources": [{
-    "resources": ["sounds/*.mp3"],
-    "matches": ["<all_urls>"]
-  }],
+  "background": {
+    "service_worker": "background.js"
+  },
   "action": {
     "default_popup": "popup.html",
     "default_icon": {

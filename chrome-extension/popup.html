@@ -20,27 +20,40 @@
     </div>
 
     <div class="container p-4 relative z-10 flex flex-col h-full">
-        <!-- Top Now Playing Bar -->
-        <div id="now-playing" class="hidden mb-6 bg-white/5 rounded-xl p-3">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <span id="current-mix-emoji" class="text-2xl mr-3"></span>
-                    <div>
-                        <div class="text-sm text-white/60">Now Playing</div>
-                        <h3 id="current-mix-name" class="font-medium"></h3>
-                        <p id="current-mix-sounds" class="text-sm text-white/60"></p>
-                    </div>
-                </div>
+        <header class="mb-4 flex items-start justify-between gap-3">
+            <div>
+                <h1 class="text-2xl font-bold wave-text">White Wave</h1>
+                <p class="text-sm text-white/60">Favorites soundboard</p>
             </div>
-        </div>
-
-        <header class="text-center mb-6">
-            <h1 class="text-3xl font-bold mb-2 wave-text">White Wave</h1>
-            <p class="text-sm text-white/60">Your saved mixes</p>
+            <div class="flex items-center gap-2">
+                <button id="import-mixes" type="button" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all" title="Import mixes from the White Wave website">
+                    <i class="fas fa-download mr-2"></i>Import
+                </button>
+                <button id="toggle-mute" type="button" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all" title="Mute/unmute">
+                    <i class="fas fa-volume-mute mr-2"></i>Mute
+                </button>
+                <button id="stop-all" type="button" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all" title="Stop all sounds">
+                    <i class="fas fa-stop mr-2"></i>Stop
+                </button>
+            </div>
         </header>
 
-        <div id="mixes-container" class="space-y-4 overflow-y-auto flex-grow pr-2">
-            <!-- Mixes will be loaded here -->
+        <div id="notice" class="hidden mb-3 px-3 py-2 rounded-lg bg-white/5 text-sm text-white/80"></div>
+
+        <div class="mb-3 flex gap-2">
+            <button id="tab-favorites" type="button" class="tab-button px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all">
+                Favorites
+            </button>
+            <button id="tab-all" type="button" class="tab-button px-3 py-2 rounded-lg bg-white/5 hover:bg-white/20 transition-all">
+                All Sounds
+            </button>
+            <button id="tab-presets" type="button" class="tab-button px-3 py-2 rounded-lg bg-white/5 hover:bg-white/20 transition-all">
+                Mixes
+            </button>
+        </div>
+
+        <div id="list-container" class="space-y-3 overflow-y-auto flex-grow pr-2">
+            <!-- Sound rows -->
         </div>
     </div>
 

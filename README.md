@@ -26,6 +26,20 @@ White Wave is a mindfulness and focus application designed to help users create 
 4. Save your favorite mixes for future use.
 5. Enjoy a calming audio experience tailored to your needs.
 
+## Run Locally (Docker)
+
+- Build and start Nginx container (serves `app/`): `docker-compose up --build`
+- Open: `http://localhost:8284`
+- Stop: `docker-compose down`
+
+## Chrome Extension (Optional)
+
+The `chrome-extension/` folder contains an MV3 extension that provides quick access to favorite sounds and can import your saved mixes from the website.
+
+- Chrome → `chrome://extensions` → enable Developer Mode
+- “Load unpacked” → select `chrome-extension/`
+- To import mixes: open White Wave in a tab (production or localhost) → click **Import** in the extension → play mixes from the **Mixes** tab
+
 ## Contributing
 Contributions are welcome! If you have suggestions for improvements or new features, feel free to open an issue or submit a pull request.
 

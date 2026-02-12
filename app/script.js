@@ -3,9 +3,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveMixButton = document.getElementById('save-mix');
     const presetMixesContainer = document.getElementById('preset-mixes');
     const themeToggle = document.getElementById('theme-toggle');
+    const stopAllButton = document.getElementById('stop-all');
     const html = document.documentElement;
-    let isPlaying = false;
     const sounds = {};
+    const soundState = {};
     const saveModal = document.getElementById('save-mix-modal');
     const saveForm = document.getElementById('save-mix-form');
     const closeModalBtn = document.getElementById('close-modal');
@@ -20,44 +21,162 @@ document.addEventListener('DOMContentLoaded', () => {
     const body = document.body;
     const creditsModal = document.getElementById('credits-modal');
     const showCreditsButton = document.getElementById('show-credits');
+    const alertOkButton = document.getElementById('alert-ok');
+    const alertCancelButton = document.getElementById('alert-cancel');
+    const alertConfirmButton = document.getElementById('alert-confirm');
 
+    const focusReturn = new Map();
+    let muteSnapshot = null;
 
-    // Load sound files
-    soundCards.forEach(card => {
+    function getFocusableElements(container) {
+        return Array.from(container.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'))
+            .filter(el => !el.hasAttribute('disabled') && !el.getAttribute('aria-hidden'));
+    }
+
+    function openModal(modal, opener) {
+        focusReturn.set(modal, opener || document.activeElement);
+        modal.setAttribute('data-visible', 'true');
+        const panel = modal.querySelector(':scope > div');
+        const focusables = getFocusableElements(modal);
+        (focusables[0] || panel || modal).focus();
+    }
+
+    function closeModal(modal) {
+        modal.removeAttribute('data-visible');
+        const opener = focusReturn.get(modal);
+        focusReturn.delete(modal);
+        if (opener && typeof opener.focus === 'function') opener.focus();
+    }
+
+    function trapFocus(modal, e) {
+        if (!modal.hasAttribute('data-visible') || e.key !== 'Tab') return;
+        const focusables = getFocusableElements(modal);
+        if (focusables.length === 0) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+        }
+    }
+
+    function getAudio(soundName) {
+        if (!sounds[soundName]) {
+            const audio = new Audio(`sounds/${soundName}.mp3`);
+            audio.loop = true;
+            audio.preload = 'none';
+            sounds[soundName] = audio;
+        }
+        return sounds[soundName];
+    }
+
+    function setCardPressed(card, pressed) {
+        card.setAttribute('aria-pressed', pressed ? 'true' : 'false');
+    }
+
+    function setSliderEnabled(card, enabled) {
+        const slider = card.querySelector('.volume-slider');
+        slider.disabled = !enabled;
+    }
+
+    function syncCardClasses(card) {
         const soundName = card.dataset.sound;
-        sounds[soundName] = new Audio(`sounds/${soundName}.mp3`);
-        sounds[soundName].loop = true;
-    });
+        const state = soundState[soundName];
+        card.classList.toggle('active', state.active);
+        card.classList.toggle('playing', state.playing);
+        setCardPressed(card, state.active);
+        setSliderEnabled(card, state.active);
+    }
+
+    function updateSliderGradient(slider) {
+        const percentage = parseFloat(slider.value) * 100;
+        slider.style.setProperty('--value', `${percentage}%`);
+    }
+
+    function setSoundVolume(soundName, volume) {
+        soundState[soundName].volume = volume;
+        if (sounds[soundName]) sounds[soundName].volume = volume;
+    }
+
+    async function playSound(soundName) {
+        const audio = getAudio(soundName);
+        audio.volume = soundState[soundName].volume;
+        try {
+            await audio.play();
+            soundState[soundName].playing = true;
+        } catch {
+            soundState[soundName].playing = false;
+            showAlert('Audio playback was blocked by the browser. Please try again.');
+        }
+    }
+
+    function pauseSound(soundName) {
+        if (sounds[soundName]) sounds[soundName].pause();
+        soundState[soundName].playing = false;
+    }
+
+    function stopAll({ deactivate = false } = {}) {
+        muteSnapshot = null;
+        Object.keys(soundState).forEach(soundName => {
+            pauseSound(soundName);
+            if (deactivate) soundState[soundName].active = false;
+        });
+        soundCards.forEach(card => syncCardClasses(card));
+        updateBackgroundState();
+    }
 
     // Handle sound card clicks
     soundCards.forEach(card => {
         const volumeSlider = card.querySelector('.volume-slider');
         const soundName = card.dataset.sound;
 
-        card.addEventListener('click', () => {
-            if (sounds[soundName].paused) {
-                sounds[soundName].play();
-                volumeSlider.disabled = false;
-                card.classList.add('active', 'playing');
+        soundState[soundName] = {
+            active: false,
+            playing: false,
+            volume: parseFloat(volumeSlider.value),
+        };
+
+        const displayName = (card.querySelector('h3')?.textContent || soundName).trim();
+        volumeSlider.setAttribute('aria-label', `Volume for ${displayName}`);
+        updateSliderGradient(volumeSlider);
+
+        const toggleSound = async () => {
+            const state = soundState[soundName];
+            state.active = !state.active;
+            if (state.active) {
+                await playSound(soundName);
             } else {
-                sounds[soundName].pause();
-                volumeSlider.disabled = true;
-                card.classList.remove('active', 'playing');
+                pauseSound(soundName);
             }
+            syncCardClasses(card);
             updateBackgroundState();
+        };
+
+        card.addEventListener('click', () => {
+            toggleSound();
+        });
+
+        card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleSound();
+            }
         });
 
         volumeSlider.addEventListener('input', (event) => {
-            const volume = event.target.value;
-            sounds[soundName].volume = volume;
-            
-            // Update the gradient
-            const percentage = volume * 100;
-            event.target.style.setProperty('--value', `${percentage}%`);
+            const volume = parseFloat(event.target.value);
+            setSoundVolume(soundName, volume);
+            updateSliderGradient(event.target);
         });
 
         // Prevent slider interaction from triggering card click
         volumeSlider.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+        volumeSlider.addEventListener('keydown', (e) => {
             e.stopPropagation();
         });
     });
@@ -85,36 +204,26 @@ document.addEventListener('DOMContentLoaded', () => {
             const volumeSlider = card.querySelector('.volume-slider');
             mixState[soundName] = {
                 volume: parseFloat(volumeSlider.value),
-                active: card.classList.contains('active')
+                active: soundState[soundName]?.active ?? card.classList.contains('active')
             };
         });
         return mixState;
     }
 
-    function applyMixState(mixState) {
-        // Stop all current sounds first
-        Object.values(sounds).forEach(sound => sound.pause());
-        soundCards.forEach(card => {
-            card.classList.remove('active');
-            const slider = card.querySelector('.volume-slider');
-            slider.disabled = true;
-        });
+    async function applyMixState(mixState) {
+        stopAll({ deactivate: true });
 
-        // Apply the new mix state
-        Object.entries(mixState).forEach(([soundName, state]) => {
+        for (const [soundName, state] of Object.entries(mixState)) {
             const card = document.querySelector(`[data-sound="${soundName}"]`);
-            const sound = sounds[soundName];
+            if (!card || !soundState[soundName]) continue;
             const slider = card.querySelector('.volume-slider');
-            
-            if (state.active) {
-                sound.volume = state.volume;
-                slider.value = state.volume;
-                slider.style.setProperty('--value', `${state.volume * 100}%`);
-                slider.disabled = false;
-                sound.play();
-                card.classList.add('active');
-            }
-        });
+            slider.value = state.volume;
+            setSoundVolume(soundName, state.volume);
+            updateSliderGradient(slider);
+            soundState[soundName].active = Boolean(state.active);
+            if (state.active) await playSound(soundName);
+            syncCardClasses(card);
+        }
 
         updateBackgroundState();
     }
@@ -122,6 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function createPresetCard(name, mixState) {
         const card = document.createElement('div');
         card.className = 'preset-card bg-white/5 rounded-xl p-6 hover:bg-white/10 transition-all';
+        card.dataset.mixName = name;
         
         // Get random emoji
         const randomEmoji = mixEmojis[Math.floor(Math.random() * mixEmojis.length)];
@@ -131,32 +241,59 @@ document.addEventListener('DOMContentLoaded', () => {
             .map(([sound]) => sound.charAt(0).toUpperCase() + sound.slice(1))
             .join(' • ');
 
-        card.innerHTML = `
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-medium">
-                    <span class="mr-2">${randomEmoji}</span>
-                    ${name}
-                </h3>
-                <div class="flex gap-2">
-                    <button class="play-preset p-2 rounded-lg bg-white/10 hover:bg-white/20">
-                        <i class="fas fa-play"></i>
-                    </button>
-                    <button class="delete-preset p-2 rounded-lg bg-white/10 hover:bg-white/20">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="text-sm text-white/60">
-                ${activeStates}
-            </div>
-        `;
+        const header = document.createElement('div');
+        header.className = 'flex justify-between items-center mb-4';
+
+        const title = document.createElement('h3');
+        title.className = 'text-xl font-medium';
+
+        const emoji = document.createElement('span');
+        emoji.className = 'mr-2';
+        emoji.textContent = randomEmoji;
+
+        const titleText = document.createElement('span');
+        titleText.textContent = name;
+
+        title.appendChild(emoji);
+        title.appendChild(titleText);
+
+        const actions = document.createElement('div');
+        actions.className = 'flex gap-2';
+
+        const playButton = document.createElement('button');
+        playButton.type = 'button';
+        playButton.className = 'play-preset p-2 rounded-lg bg-white/10 hover:bg-white/20';
+        playButton.setAttribute('aria-label', `Play mix ${name}`);
+        const playIcon = document.createElement('i');
+        playIcon.className = 'fas fa-play';
+        playButton.appendChild(playIcon);
+
+        const deleteButton = document.createElement('button');
+        deleteButton.type = 'button';
+        deleteButton.className = 'delete-preset p-2 rounded-lg bg-white/10 hover:bg-white/20';
+        deleteButton.setAttribute('aria-label', `Delete mix ${name}`);
+        const deleteIcon = document.createElement('i');
+        deleteIcon.className = 'fas fa-trash';
+        deleteButton.appendChild(deleteIcon);
+
+        actions.appendChild(playButton);
+        actions.appendChild(deleteButton);
+        header.appendChild(title);
+        header.appendChild(actions);
+
+        const details = document.createElement('div');
+        details.className = 'text-sm text-white/60';
+        details.textContent = activeStates;
+
+        card.appendChild(header);
+        card.appendChild(details);
 
         // Add event listeners
-        card.querySelector('.play-preset').addEventListener('click', () => {
+        playButton.addEventListener('click', () => {
             applyMixState(mixState);
         });
 
-        card.querySelector('.delete-preset').addEventListener('click', async () => {
+        deleteButton.addEventListener('click', async () => {
             const confirmed = await showConfirm('Are you sure you want to delete this mix?');
             if (confirmed) {
                 const savedMixes = JSON.parse(localStorage.getItem('presetMixes') || '{}');
@@ -171,41 +308,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function showAlert(message) {
         alertMessage.textContent = message;
-        alertModal.setAttribute('data-visible', 'true');
+        alertCancelButton.classList.add('hidden');
+        alertConfirmButton.classList.add('hidden');
+        alertOkButton.classList.remove('hidden');
+        openModal(alertModal);
     }
 
     function showConfirm(message) {
         return new Promise((resolve) => {
-            showAlert(message);
-            
-            const handleConfirm = (confirmed) => {
-                alertModal.removeAttribute('data-visible');
-                resolve(confirmed);
+            alertMessage.textContent = message;
+            alertOkButton.classList.add('hidden');
+            alertCancelButton.classList.remove('hidden');
+            alertConfirmButton.classList.remove('hidden');
+            openModal(alertModal);
+
+            let resolved = false;
+            let observer = null;
+            const cleanup = () => {
+                alertCancelButton.removeEventListener('click', onCancel);
+                alertConfirmButton.removeEventListener('click', onConfirm);
+                if (observer) observer.disconnect();
+            };
+            const onCancel = () => {
+                if (resolved) return;
+                resolved = true;
+                cleanup();
+                closeModal(alertModal);
+                resolve(false);
+            };
+            const onConfirm = () => {
+                if (resolved) return;
+                resolved = true;
+                cleanup();
+                closeModal(alertModal);
+                resolve(true);
             };
 
-            // Add temporary buttons
-            const buttonsDiv = alertModal.querySelector('.flex.justify-end');
-            buttonsDiv.innerHTML = `
-                <button class="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors" data-confirm="false">
-                    Cancel
-                </button>
-                <button class="px-4 py-2 bg-purple-500 hover:bg-purple-600 rounded-lg transition-colors ml-3" data-confirm="true">
-                    Confirm
-                </button>
-            `;
+            alertCancelButton.addEventListener('click', onCancel);
+            alertConfirmButton.addEventListener('click', onConfirm);
 
-            // Add click handlers
-            buttonsDiv.querySelectorAll('button').forEach(button => {
-                button.addEventListener('click', () => {
-                    handleConfirm(button.dataset.confirm === 'true');
-                    // Restore original button
-                    buttonsDiv.innerHTML = `
-                        <button class="alert-close px-4 py-2 bg-purple-500 hover:bg-purple-600 rounded-lg transition-colors">
-                            OK
-                        </button>
-                    `;
-                }, { once: true });
+            observer = new MutationObserver(() => {
+                if (resolved) return;
+                if (!alertModal.hasAttribute('data-visible')) {
+                    resolved = true;
+                    cleanup();
+                    resolve(false);
+                }
             });
+            observer.observe(alertModal, { attributes: true, attributeFilter: ['data-visible'] });
         });
     }
 
@@ -228,25 +378,25 @@ document.addEventListener('DOMContentLoaded', () => {
         activeSoundsList.textContent = activeStates;
         
         // Show modal
-        saveModal.setAttribute('data-visible', 'true');
+        openModal(saveModal, saveMixButton);
         mixNameInput.focus();
     });
 
     // Add these event listeners for the modal
     closeModalBtn.addEventListener('click', () => {
-        saveModal.removeAttribute('data-visible');
+        closeModal(saveModal);
         mixNameInput.value = '';
     });
 
     cancelSaveBtn.addEventListener('click', () => {
-        saveModal.removeAttribute('data-visible');
+        closeModal(saveModal);
         mixNameInput.value = '';
     });
 
     // Close modal on outside click
     saveModal.addEventListener('click', (e) => {
         if (e.target === saveModal) {
-            saveModal.removeAttribute('data-visible');
+            closeModal(saveModal);
             mixNameInput.value = '';
         }
     });
@@ -272,7 +422,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Remove existing card with same name if it exists
         const existingCard = Array.from(presetMixesContainer.children)
-            .find(card => card.querySelector('h3').textContent === name);
+            .find(card => card.dataset.mixName === name);
         if (existingCard) {
             existingCard.remove();
         }
@@ -280,16 +430,8 @@ document.addEventListener('DOMContentLoaded', () => {
         presetMixesContainer.appendChild(createPresetCard(name, mixState));
         
         // Close and reset modal
-        saveModal.removeAttribute('data-visible');
+        closeModal(saveModal);
         mixNameInput.value = '';
-    });
-
-    // Add keyboard support for the modal
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && saveModal.hasAttribute('data-visible')) {
-            saveModal.removeAttribute('data-visible');
-            mixNameInput.value = '';
-        }
     });
 
     // Load saved mixes on startup
@@ -310,37 +452,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.querySelectorAll('.alert-close').forEach(button => {
-        button.addEventListener('click', () => {
-            alertModal.removeAttribute('data-visible');
-        });
+        button.addEventListener('click', () => closeModal(alertModal));
     });
 
     // Close alert modal on outside click
     alertModal.addEventListener('click', (e) => {
         if (e.target === alertModal) {
-            alertModal.removeAttribute('data-visible');
-        }
-    });
-
-    // Add ESC key support for alert modal
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            if (alertModal.hasAttribute('data-visible')) {
-                alertModal.removeAttribute('data-visible');
-            }
-            if (saveModal.hasAttribute('data-visible')) {
-                saveModal.removeAttribute('data-visible');
-                mixNameInput.value = '';
-            }
+            closeModal(alertModal);
         }
     });
 
     function toggleShortcutsModal() {
         const isVisible = shortcutsModal.hasAttribute('data-visible');
         if (isVisible) {
-            shortcutsModal.removeAttribute('data-visible');
+            closeModal(shortcutsModal);
         } else {
-            shortcutsModal.setAttribute('data-visible', 'true');
+            openModal(shortcutsModal, shortcutsButton);
         }
     }
 
@@ -348,108 +475,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.shortcuts-close').forEach(button => {
         button.addEventListener('click', () => {
-            shortcutsModal.removeAttribute('data-visible');
+            closeModal(shortcutsModal);
         });
     });
 
     // Close shortcuts modal on outside click
     shortcutsModal.addEventListener('click', (e) => {
         if (e.target === shortcutsModal) {
-            shortcutsModal.removeAttribute('data-visible');
+            closeModal(shortcutsModal);
         }
     });
 
-    // Update the keyboard event listener to handle all shortcuts
-    document.addEventListener('keydown', (e) => {
-        // Ignore shortcuts when typing in input fields
-        if (e.target.tagName === 'INPUT') return;
-
-        switch (e.key.toLowerCase()) {
-            case ' ': // Spacebar
-                e.preventDefault(); // Prevent page scroll
-                // Toggle all active sounds
-                soundCards.forEach(card => {
-                    if (card.classList.contains('active')) {
-                        const soundName = card.dataset.sound;
-                        if (sounds[soundName].paused) {
-                            sounds[soundName].play();
-                        } else {
-                            sounds[soundName].pause();
-                        }
-                    }
-                });
-                break;
-
-            case 'm':
-                // Mute/unmute all sounds
-                const anyPlaying = Object.values(sounds).some(sound => !sound.paused);
-                Object.values(sounds).forEach(sound => {
-                    if (anyPlaying) {
-                        sound.pause();
-                    } else if (sound._wasPlaying) {
-                        sound.play();
-                    }
-                    sound._wasPlaying = !sound.paused;
-                });
-                break;
-
-            case 's':
-                // Open save mix modal
-                if (!saveModal.hasAttribute('data-visible')) {
-                    saveMixButton.click();
-                }
-                break;
-
-            case '?':
-            case '/':
-                // Toggle shortcuts modal
-                toggleShortcutsModal();
-                break;
-
-            case 'escape':
-                // Close any open modal
-                [saveModal, alertModal, shortcutsModal, creditsModal].forEach(modal => {
-                    if (modal.hasAttribute('data-visible')) {
-                        modal.removeAttribute('data-visible');
-                    }
-                });
-                mixNameInput.value = '';
-                break;
-
-            default:
-                // Number keys 1-9 for toggling sounds
-                if (!isNaN(e.key) && e.key !== '0') {
-                    const index = parseInt(e.key) - 1;
-                    const card = soundCards[index];
-                    if (card) card.click();
-                }
-
-                // Arrow keys for volume control of active sounds
-                if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-                    e.preventDefault(); // Prevent page scroll
-                    soundCards.forEach(card => {
-                        if (card.classList.contains('active')) {
-                            const slider = card.querySelector('.volume-slider');
-                            const step = e.key === 'ArrowUp' ? 0.1 : -0.1;
-                            const newValue = Math.max(0, Math.min(1, parseFloat(slider.value) + step));
-                            slider.value = newValue;
-                            const event = new Event('input');
-                            slider.dispatchEvent(event);
-                        }
-                    });
-                }
-                break;
-        }
-    });
-
-    // Initialize all sliders with default value
-    document.querySelectorAll('.volume-slider').forEach(slider => {
-        slider.style.setProperty('--value', '50%');
-    });
+    stopAllButton.addEventListener('click', () => stopAll({ deactivate: true }));
 
     // Update the function that handles sound activation
     function updateBackgroundState() {
-        const activeSounds = Array.from(soundCards).filter(card => card.classList.contains('active'));
+        const activeSounds = Array.from(soundCards).filter(card => soundState[card.dataset.sound]?.active);
         const activeCount = activeSounds.length;
 
         // Remove all states first
@@ -469,12 +510,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     showCreditsButton.addEventListener('click', (e) => {
         e.preventDefault();
-        creditsModal.setAttribute('data-visible', 'true');
+        openModal(creditsModal, showCreditsButton);
     });
 
     document.querySelectorAll('.credits-close').forEach(button => {
         button.addEventListener('click', () => {
-            creditsModal.removeAttribute('data-visible');
+            closeModal(creditsModal);
         });
 
     });
@@ -482,18 +523,103 @@ document.addEventListener('DOMContentLoaded', () => {
     // Close credits modal on outside click
     creditsModal.addEventListener('click', (e) => {
         if (e.target === creditsModal) {
-            creditsModal.removeAttribute('data-visible');
+            closeModal(creditsModal);
         }
     });
 
-    // Update the ESC key handler to include credits modal
+    function anySelectedPlaying() {
+        return Object.entries(soundState).some(([, state]) => state.active && state.playing);
+    }
+
+    async function playSelected() {
+        for (const [soundName, state] of Object.entries(soundState)) {
+            if (state.active) await playSound(soundName);
+        }
+        soundCards.forEach(card => syncCardClasses(card));
+        updateBackgroundState();
+    }
+
+    function pauseSelected() {
+        for (const [soundName, state] of Object.entries(soundState)) {
+            if (state.active) pauseSound(soundName);
+        }
+        soundCards.forEach(card => syncCardClasses(card));
+        updateBackgroundState();
+    }
+
+    function toggleMute() {
+        if (!muteSnapshot) {
+            muteSnapshot = {};
+            for (const [soundName, state] of Object.entries(soundState)) {
+                muteSnapshot[soundName] = state.playing;
+                pauseSound(soundName);
+            }
+        } else {
+            const snapshot = muteSnapshot;
+            muteSnapshot = null;
+            Object.entries(snapshot).forEach(([soundName, wasPlaying]) => {
+                if (wasPlaying) playSound(soundName);
+            });
+        }
+        soundCards.forEach(card => syncCardClasses(card));
+        updateBackgroundState();
+    }
+
     document.addEventListener('keydown', (e) => {
+        trapFocus(saveModal, e);
+        trapFocus(alertModal, e);
+        trapFocus(shortcutsModal, e);
+        trapFocus(creditsModal, e);
+
         if (e.key === 'Escape') {
             [saveModal, alertModal, shortcutsModal, creditsModal].forEach(modal => {
-                if (modal.hasAttribute('data-visible')) {
-                    modal.removeAttribute('data-visible');
-                }
+                if (modal.hasAttribute('data-visible')) closeModal(modal);
             });
+            mixNameInput.value = '';
+            return;
+        }
+
+        // Ignore shortcuts when typing in input fields
+        if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+
+        if (e.key === ' ') {
+            e.preventDefault();
+            if (anySelectedPlaying()) pauseSelected();
+            else playSelected();
+            return;
+        }
+
+        switch (e.key.toLowerCase()) {
+            case 'm':
+                toggleMute();
+                break;
+            case 's':
+                if (!saveModal.hasAttribute('data-visible')) saveMixButton.click();
+                break;
+            case '?':
+            case '/':
+                toggleShortcutsModal();
+                break;
+            default:
+                if (!isNaN(e.key) && e.key !== '0') {
+                    const index = parseInt(e.key) - 1;
+                    const card = soundCards[index];
+                    if (card) card.click();
+                }
+                if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    soundCards.forEach(card => {
+                        const soundName = card.dataset.sound;
+                        if (soundState[soundName]?.active) {
+                            const slider = card.querySelector('.volume-slider');
+                            const step = e.key === 'ArrowUp' ? 0.1 : -0.1;
+                            const newValue = Math.max(0, Math.min(1, parseFloat(slider.value) + step));
+                            slider.value = newValue;
+                            slider.dispatchEvent(new Event('input'));
+                        }
+                    });
+                }
+                break;
         }
     });
 });

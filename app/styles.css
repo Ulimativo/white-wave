@@ -8,10 +8,20 @@
     --accent-gradient: linear-gradient(45deg, #FF79C6, #BD93F9, #8BE9FD);
 }
 
+.font-space-grotesk {
+    font-family: 'Space Grotesk', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
 .dark {
     --card-bg: rgba(0, 0, 0, 0.2);
     --card-border: rgba(255, 255, 255, 0.05);
     --card-hover-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* Utility used in index.html */
+.animate-gradient {
+    background-size: 400% 400%;
+    animation: gradientShift 6s ease infinite;
 }
 
 /* Base background setup */
@@ -206,6 +216,11 @@
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+.sound-card:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.55), 0 8px 32px 0 rgba(31, 38, 135, 0.5);
 }
 
 .sound-card:hover {
@@ -567,4 +582,28 @@
 #credits-modal > div {
     background-color: #1a1b26;
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Shortcuts Modal Animation */
+#shortcuts-modal[data-visible="true"] {
+    display: flex;
+    animation: modalFadeIn 0.2s ease-out;
+}
+
+#shortcuts-modal > div {
+    background-color: #1a1b26;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .noise {
+        display: none;
+    }
 }

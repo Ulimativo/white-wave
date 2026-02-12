@@ -193,20 +193,86 @@ body {
     min-width: 600px;
 }
 
-/* Control button styling */
-.play-mix, #stop-all {
-    min-width: 48px;
-    min-height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.font-space-grotesk {
+    font-family: 'Space Grotesk', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+.icon-button {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     transition: all 0.2s ease;
 }
 
-.play-mix:hover, #stop-all:hover {
-    transform: scale(1.1);
+.icon-button:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: translateY(-1px);
 }
 
-.play-mix:active, #stop-all:active {
-    transform: scale(0.95);
-} 
+.sound-row.is-playing {
+    background: rgba(255, 121, 198, 0.12);
+    border-color: rgba(255, 121, 198, 0.25);
+}
+
+.preset-row.is-playing {
+    background: rgba(255, 121, 198, 0.12);
+    border-color: rgba(255, 121, 198, 0.25);
+}
+
+.volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.volume-slider::-webkit-slider-runnable-track {
+    height: 10px;
+    border-radius: 999px;
+    background: linear-gradient(
+        90deg,
+        rgb(255, 73, 167) 0%,
+        rgb(255, 140, 85) var(--value, 50%),
+        rgba(255,255,255,0.12) var(--value, 50%)
+    );
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    background: white;
+    margin-top: -4px;
+}
+
+.volume-slider::-moz-range-track {
+    height: 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border: none;
+    border-radius: 999px;
+    background: white;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+    }
+    .noise {
+        display: none;
+    }
+}
